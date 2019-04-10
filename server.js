@@ -40,6 +40,18 @@ app.use(function (req, res, next) {
     next();
 });
 
+// Require database config
+const DB_DEVELOPMENT = require('./config/developmentDatabase');
+const DB_PRODUCTION = require('./config/productionDatabase');
+process.env.NODE_ENV === 'production' ? DB = DB_PRODUCTION : DB = DB_DEVELOPMENT;
+process.env.NODE_ENV === 'production' ? console.log('Production DB connected') : console.log('Development DB connected');
+
+// Test the DB
+DB.authenticate()
+  .then(() => console.log('Connection to database established...'))
+  .catch(err => console.log(`Error:${err}`));
+
+
 // Bring in the route file
 const route = require('./routes/route');
 
