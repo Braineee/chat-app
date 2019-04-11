@@ -50,7 +50,7 @@ module.exports = {
       },
       groupId: {
         type: Sequelize.INTEGER,
-        defaultValue: 4
+        defaultValue: 3
       },
       location: {
         type: Sequelize.STRING
@@ -59,8 +59,9 @@ module.exports = {
         type: Sequelize.STRING
       },
       isActive: {
-        type: Sequelize.INTEGER(1),
-        allowNull: false
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 1
       },
       createdAt: {
         type: Sequelize.DATE,

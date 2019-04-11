@@ -1,15 +1,15 @@
 'use strict'
 
-// Require sequelize 
-const Sequelize = require('sequelize');
+// Require sequeliz
+module.exports = (sequelize, DataTypes) => {
+    const Chat = sequelize.define('Chat', {
+        senderId: {
+            type: DataTypes.INTEGER
+        },
+        receiverId: {
+            type: DataTypes.INTEGER
+        },
+    }, {});
 
-const Chat = sequelize.define('Chat', {
-    senderId: {
-        type: Sequelize.INTEGER
-    },
-    receiverId: {
-        type: Sequelize.INTEGER
-    },
-}, {});
-
-module.exports = Chat;
+    return Chat;
+}

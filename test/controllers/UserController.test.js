@@ -4,6 +4,7 @@
 const mocha = require('mocha'); 
 const chai = require('chai'); 
 const chaiHttp = require('chai-http');
+const request = require('supertest')("http://localhost:5000/api");
 
 // Use chai http middleware
 chai.use(chaiHttp);
@@ -11,15 +12,31 @@ chai.use(chaiHttp);
 // set expect handler
 const expect = chai.expect;
 
-// Require the user controller
-const UserController = require('./UserController.test');
-
 describe('UserController', () => {
-    // Expect the user conroller to be an object
+    const UserController = require('../../controllers/UserController');
+
+    // Expect the UserController to be an object
     it('UserController should be an object', () => {
-        expect(UserController).to.be.object();
+        expect(UserController).to.be.a('object');
     });
 
-    // User controller should have property create
-    // User controller should have property update
+    describe('Usercontroller.GetAllUser', () => {
+        // Expect the UserController.GetAllUsers conroller to be an function
+        it('UserController.GetAllUsers should be an function', () => {
+            let getAllUsers = UserController.GetAllUsers;
+            expect(getAllUsers).to.be.a('function');
+        }); 
+        
+    });
+
+    describe('Usercontroller.findOne', () => {
+        // Expect the UserController.findOne conroller to be an function
+        it('UserController.findOne should be an function', () => {
+            let findOne = UserController.findOne;
+            expect(findOne).to.be.a('function');
+        }); 
+        
+    });
+    
+    
 })

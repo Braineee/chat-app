@@ -1,70 +1,69 @@
 'use strict'
 
-// Require sequelize 
-const Sequelize = require('sequelize');
-
-const User = sequelize.define('User', {
-    username: {
-        type: Sequelize.STRING
-    },
-    password: {
-        type: Sequelize.STRING
-    },
-    firstName: {
-        type: Sequelize.STRING
-    },
-    lastName: {
-        type: Sequelize.STRING
-    },
-    email: {
-        type: Sequelize.STRING
-    },
-    PhoneNo: {
-        type: Sequelize.STRING
-    },
-    facebookId: {
-        type: Sequelize.STRING
-    },
-    facebookToken: {
-        type: Sequelize.STRING
-    },
-    twitterId: {
-        type: Sequelize.STRING
-    },
-    twitterToken: {
-        type: Sequelize.STRING
-    },
-    googleId: {
-        type: Sequelize.STRING
-    },
-    googleToken: {
-        type: Sequelize.STRING
-    },
-    token: {
-        type: Sequelize.STRING
-    },
-    groupId: {
-        type: Sequelize.INTEGER,
-    defaultValue: 4
-    },
-    location: {
-        type: Sequelize.STRING
-    },
-    profilePhoto: {
-        type: Sequelize.STRING
-    },
-    isActive: {
-        type: Sequelize.INTEGER(1),
-        allowNull: false
-    },
-}, {
-    // Set the getter method for users
-    getterMethods: {
-        fullname(){
-            return [this.firstName, this.lastName].join(' ');
+module.exports = (sequelize, DataTypes) => {
+    const User = sequelize.define('User', {
+        username: {
+            type: DataTypes.STRING
+        },
+        password: {
+            type: DataTypes.STRING
+        },
+        firstName: {
+            type: DataTypes.STRING
+        },
+        lastName: {
+            type: DataTypes.STRING
+        },
+        email: {
+            type: DataTypes.STRING
+        },
+        PhoneNo: {
+            type: DataTypes.STRING
+        },
+        facebookId: {
+            type: DataTypes.STRING
+        },
+        facebookToken: {
+            type: DataTypes.STRING
+        },
+        twitterId: {
+            type: DataTypes.STRING
+        },
+        twitterToken: {
+            type: DataTypes.STRING
+        },
+        googleId: {
+            type: DataTypes.STRING
+        },
+        googleToken: {
+            type: DataTypes.STRING
+        },
+        token: {
+            type: DataTypes.STRING
+        },
+        groupId: {
+            type: DataTypes.INTEGER,
+            defaultValue: 3
+        },
+        location: {
+            type: DataTypes.STRING
+        },
+        profilePhoto: {
+            type: DataTypes.STRING
+        },
+        isActive: {
+            type: DataTypes.INTEGER(1),
+            allowNull: false,
+            defaultValue: 1
+        },
+    }, {
+        // Set the getter method for users
+        getterMethods: {
+            fullname(){
+                return [this.firstName, this.lastName].join(' ');
+            }
         }
-    }
-});
+    });
 
-
-module.exports = User;
+    return User;
+}

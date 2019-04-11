@@ -1,18 +1,18 @@
 'use strict'
 
 // Require sequelize 
-const Sequelize = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+    const Conversation = sequelize.define('Conversation', {
+        chatId: {
+            type: DataTypes.INTEGER
+        },
+        userId: {
+            type: DataTypes.INTEGER
+        },
+        message: {
+            type: DataTypes.TEXT
+        },
+    }, {});
 
-const Conversation = sequelize.define('Conversation', {
-    chatId: {
-        type: Sequelize.INTEGER
-    },
-    userId: {
-        type: Sequelize.INTEGER
-    },
-    message: {
-        type: Sequelize.TEXT
-    },
-}, {});
-
-module.exports = Conversation;
+    return Conversation;
+}

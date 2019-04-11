@@ -5,17 +5,19 @@
   "main": "server.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --recursive",
-    "start": "node server.js", 
+    "start": "node server.js",
     "dev": "nodemon app.js"
   },
   "author": "Enigma",
   "license": "ISC",
   "dependencies": {
+    "awesome-phonenumber": "^2.8.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
     "morgan": "^1.9.1",
     "mysql2": "^1.6.5",
     "sequelize": "^5.3.0"
@@ -24,6 +26,7 @@
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
     "mocha": "^6.1.2",
-    "nodemon": "^1.18.11"
+    "nodemon": "^1.18.11",
+    "supertest": "^4.0.2"
   }
 }
