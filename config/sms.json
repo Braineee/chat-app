@@ -1,10 +1,11 @@
 {
     "development": {
         "username": "sandbox",
-        "apiKey": "a5fd79e9ab3abd39b103b570514a64e175513fc7d2aed0819fc26c9ee0248f8b"
+        "apiKey": "3b2d825bdedcbd03ee8f8821978643d92f5c7de5a55544b2f97979b37df83063"
     },
     "production": {
         "username": "",
         "apiKey": ""
     }
 }
+

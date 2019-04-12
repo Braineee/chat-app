@@ -9,6 +9,9 @@ const models = require('../models');
 // Require all Utilities
 const utility = require('../util/utility');
 
+// Require SMS
+const SMS = require('../util/sendSMS');
+
 // Require ErrorHandler
 const errorHandler = require('../util/errorHandler');
 
@@ -57,12 +60,16 @@ AuthController.Register = (req, res) => {
         })
 
         // Function saves user details to db
-        const saveUser = () => {
+        const saveUser = async () => {
             // Create the user 
             models.User.create(data)
             .then(async (newUser) => {
                 if (newUser === null) return res.json({success: false, message: 'Could not complete registation', responseType: 'failed adding user to db'});
+                console.log(newUser.PhoneNo);
+                console.log(newUser.token)
                 // Send verification mail
+                let sms = await SMS.SendVerificationToken(newUser.PhoneNo, newUser.token);
+
                 // Send phone number verification token via sms
                 return  res.json({success: true, message: 'your account was created successfully. Please check your email or SMS for verification steps.', responseType: 'successful'});
             })

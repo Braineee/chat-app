@@ -56,6 +56,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: 1
         },
+        isVerified: {
+            type: DataTypes.INTEGER(1),
+            allowNull: false,
+            defaultValue: 0
+        },
         lastLoggedin: {
             type: DataTypes.DATE
         },
