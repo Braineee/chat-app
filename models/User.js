@@ -56,6 +56,12 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: 1
         },
+        lastLoggedin: {
+            type: DataTypes.DATE
+        },
+        deviceID: {
+            type: DataTypes.STRING
+        }
     }, {
         // Set the getter method for users
         getterMethods: {

@@ -1,34 +1,34 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs'); 
-const moment = require('moment');
 const awesomePhoneNo = require('awesome-phonenumber');
+const passport = require('passport');
 
 // Require all MODELS
 const models = require('../models');
 
-// Require all UTILITIES
+// Require all Utilities
 const utility = require('../util/utility');
 
-// Require all UTILITIES
+// Require ErrorHandler
 const errorHandler = require('../util/errorHandler');
 
 
 // Init AuthController
 const AuthController = {};
 
-// Create a new account
+// REGISTER
+/**
+ * To register a new user the following are required:
+ * 1. firstName
+ * 2. lastName
+ * 3. email
+ * 4. PhoneNo
+ * 5. location
+ * 6. password
+ * 7. username
+ */
 AuthController.Register = (req, res) => {
-    /**
-     * Requires the following
-     * 1. firstName
-     * 2. lastName
-     * 3. email
-     * 4. PhoneNo
-     * 7. location
-     * 6. password
-     * 8. username
-     */
-    // Initializ ethe request data
+    // Initialize the request data
     let data = req.body;
 
     // Get the phone number format i.e: +234 000 0000 000;
@@ -47,10 +47,10 @@ AuthController.Register = (req, res) => {
         data['token'] = token;
 
         // Hash the password
-        bcrypt.genSalt(10, (err, salt) =>{
-            if (err) return res.json({success: false, message: 'Could not complete registation', responseType: 'password_encrption_failure_1'});
+        bcrypt.genSalt(10, (err, salt) => {
+            if (err) errorHandler(res, err,  'Could not complete registation', 'password_encrption_failure_1');
             bcrypt.hash(data['password'], salt, (err, hash) => {
-                if (err) return res.json({success: false, message: 'Could not complete registation', responseType: 'password_encrption_failure_2'});
+                if (err) errorHandler(res, err,  'Could not complete registation', 'password_encrption_failure_2');
                 data['password'] = hash;
                 saveUser();
             });
@@ -60,8 +60,8 @@ AuthController.Register = (req, res) => {
         const saveUser = () => {
             // Create the user 
             models.User.create(data)
-            .then(async (newUser, err) => {
-                if (err) return res.json({success: false, message: 'Could not complete registation', responseType: 'failed adding user to db'});
+            .then(async (newUser) => {
+                if (newUser === null) return res.json({success: false, message: 'Could not complete registation', responseType: 'failed adding user to db'});
                 // Send verification mail
                 // Send phone number verification token via sms
                 return  res.json({success: true, message: 'your account was created successfully. Please check your email or SMS for verification steps.', responseType: 'successful'});
@@ -69,8 +69,52 @@ AuthController.Register = (req, res) => {
             .catch(err => errorHandler(res, err));
         }
     })
-    .catch(err => { return err });
+    .catch(err => errorHandler(res, err));
 }
+
+
+// LOGIN
+/**
+ * Login requires the following:
+ * 1. PhoneNo
+ * 2. password
+ * 3. deviceID
+ */ 
+AuthController.Login = async (req, res, next) => {
+    // Check for the needed data
+    if (!req.body.PhoneNo || !req.body.password) return res.json({success: false, message: "Please provide login credentials", responseType: 'incomplete_fields'});
+
+    // Login using Passport
+    passport.authenticate('local', (err, user, info) => {
+        if (err) errorHandler(res, err, info.message);
+        if (!user) return res.json({success: false, message: info.message, responseType: info.responseType});
+       
+        // Return login response
+        return  res.json({success: true, message: 'Authentication successful!', authToken: user.token_, user: user, responseType: 'authentication_successful'}); 
+    }
+    )(req, res, next)
+}
+
+
+// GENERATE JWT
+/**
+ * Generate JWT Requires the following:
+ * 1. PhoneNo
+ * 2. [ UserId ] as id
+ */
+AuthController.generateJWT = (PhoneNo, id) => {
+    // Set the expiration date to 7 days
+    const expirationDate = 604800
+
+    return jwt.sign({
+        email: PhoneNo,
+        id: id
+    }, process.env.SECRETE, {
+        expiresIn: expirationDate // expires in 7 days
+    });
+}
+
+
 
 // Export the auth controller
 module.exports = AuthController;

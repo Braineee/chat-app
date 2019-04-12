@@ -5,7 +5,7 @@ const mocha = require('mocha');
 const chai = require('chai'); 
 const chaiHttp = require('chai-http');
 const request = require('supertest');
-const app = require('../../server');
+//const app = require('../../server');
 
 // Use chai http middleware
 chai.use(chaiHttp);
@@ -38,23 +38,26 @@ describe('AuthController', () => {
          * 5. password
          */
         it('AuthController.Register should create a new user', (done) => {
-            request(app)
+            request('http://localhost:5000/api')
             .post('/auth/register/')
-            .send({firstName: 'David', 
-                    lastName: 'Daniel', 
-                    PhoneNo: '12345678', 
-                    email: 'alindavidsin@gmail.com', 
-                    password: 'davidontop2014',
-                    location: 'Nigeria'
+            .send({
+                username: 'Davisin',
+                firstName: 'David', 
+                lastName: 'Daniel', 
+                PhoneNo: '12345678', 
+                email: 'alindavidsin@gmail.com', 
+                password: 'davidontop2014',
+                location: 'Nigeria'
             })
             .then((res, err) => {
                 expect(err).to.be.null;
                 const body = res.body;
-                //console.log(body);
+                console.log(body);
                 expect(body).to.be.an('object');
                 expect(body.success).to.be.true;
                 expect(body.responseType).to.be.equal('successful');
             })   
+            done();
         });
         
     });    

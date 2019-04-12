@@ -63,6 +63,12 @@ module.exports = {
         allowNull: false,
         defaultValue: 1
       },
+      lastLoggedin: {
+        type: DataTypes.DATE
+      },
+      deviceID: {
+          type: DataTypes.STRING
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false

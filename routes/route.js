@@ -17,7 +17,7 @@ router.get('/', (req, res) => res.send('Welcome to enigma chat API'));
 
 // AUTH ROUTES
 router.post('/auth/register/', AuthController.Register);
-
+router.post('/auth/login/', AuthController.Login);
 
 // USER ROUTES
 router.get('/users/get_all_users', UserController.GetAllUsers);

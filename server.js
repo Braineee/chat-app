@@ -5,6 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const passport = require('passport');
 
 // Set the port
 const PORT = process.env.PORT || 3000;
@@ -18,6 +19,9 @@ app.use(bodyParser.json());
 
 // Set log for all requests to database
 app.use(morgan('dev'));
+
+// Require the passport config
+require('./config/passport')(passport);
 
 //CORS
 // Add headers
