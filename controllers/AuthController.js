@@ -28,7 +28,7 @@ const AuthController = {};
  * 4. PhoneNo
  * 5. location
  * 6. password
- * 7. username
+ * 7. username 
  */
 AuthController.Register = (req, res) => {
     // Initialize the request data
@@ -59,22 +59,26 @@ AuthController.Register = (req, res) => {
             });
         })
 
-        // Function saves user details to db
+        // Saves user details to db
         const saveUser = async () => {
             // Create the user 
             models.User.create(data)
             .then(async (newUser) => {
                 if (newUser === null) return res.json({success: false, message: 'Could not complete registation', responseType: 'failed adding user to db'});
-                console.log(newUser.PhoneNo);
-                console.log(newUser.token)
-                // Send verification mail
-                let sms = await SMS.SendVerificationToken(newUser.PhoneNo, newUser.token);
-
-                // Send phone number verification token via sms
-                return  res.json({success: true, message: 'your account was created successfully. Please check your email or SMS for verification steps.', responseType: 'successful'});
+                // Proceed with verification
+                sendVerificationSMS(newUser)
             })
             .catch(err => errorHandler(res, err));
         }
+
+        // Send verification SMS
+        const sendVerificationSMS = async (newUser) => {
+            // Send SMS now
+            //let sms = await SMS.SendVerificationToken(newUser.PhoneNo, newUser.token);
+        }
+
+        // Return successfull
+        return  res.json({success: true, message: 'your account was created successfully. Please check your email or SMS for verification steps.', responseType: 'successful'});
     })
     .catch(err => errorHandler(res, err));
 }
@@ -92,10 +96,13 @@ AuthController.Login = async (req, res, next) => {
     if (!req.body.PhoneNo || !req.body.password) return res.json({success: false, message: "Please provide login credentials", responseType: 'incomplete_fields'});
 
     // Login using Passport
-    passport.authenticate('local', (err, user, info) => {
+    passport.authenticate('local', async (err, user, info) => {
         if (err) errorHandler(res, err, info.message);
         if (!user) return res.json({success: false, message: info.message, responseType: info.responseType});
-       
+
+        // Remove password from the user object if any
+        await delete user.password;
+
         // Return login response
         return  res.json({success: true, message: 'Authentication successful!', authToken: user.token_, user: user, responseType: 'authentication_successful'}); 
     }

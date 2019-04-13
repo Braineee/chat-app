@@ -75,11 +75,12 @@ const Passport = (passport) => {
             }
             
             // Create a token for the user and return the user data as response
-            const generateUserLoginToken = (user, info) => {
+            const generateUserLoginToken = async (user, info) => {
                 const token = AuthController.generateJWT(user.PhoneNo, user.id);
                 user.token_ = token;
+
                 // Remove the password form the user object
-                delete user.password;
+                await delete user.password;
 
                 // User has been verified 
                 // Return response

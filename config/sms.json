@@ -1,7 +1,7 @@
 {
     "development": {
-        "username": "sandbox",
-        "apiKey": "3b2d825bdedcbd03ee8f8821978643d92f5c7de5a55544b2f97979b37df83063"
+        "username": "enigmaChatDevelopment",
+        "apiKey": "a6be6cada06bcf08f9d9cc720dbeb796e28333fbedf436d532590a375091fdd8"
     },
     "production": {
         "username": "",
