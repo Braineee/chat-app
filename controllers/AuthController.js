@@ -15,7 +15,6 @@ const SMS = require('../util/sendSMS');
 // Require ErrorHandler
 const errorHandler = require('../util/errorHandler');
 
-
 // Init AuthController
 const AuthController = {};
 
@@ -30,7 +29,7 @@ const AuthController = {};
  * 6. password
  * 7. username 
  */
-AuthController.Register = (req, res) => {
+AuthController.Register = async (req, res) => {
     // Initialize the request data
     let data = req.body;
 
@@ -89,7 +88,7 @@ AuthController.Register = (req, res) => {
  * Login requires the following:
  * 1. PhoneNo
  * 2. password
- * 3. deviceID
+ * 3. deviceId
  */ 
 AuthController.Login = async (req, res, next) => {
     // Check for the needed data
@@ -110,6 +109,50 @@ AuthController.Login = async (req, res, next) => {
 }
 
 
+// VERIFY SMS TOKEN
+/**
+ * VerifyToken requires the following
+ * 1. id
+ * 2. token
+ */
+AuthController.ValidateSMSToken = (req, res) => {
+    let data = req.body
+    let id = data['id'];
+
+    // Get the user 
+    models.User.findOne({ where: { id } })
+    .then((user) => {
+        if (user === null) return res.json({success: false, message: "Sorry, no account was found with the details provided", responseType: 'invalid_user'});
+        // Proceed to verify token
+        verifyToke(user);
+    })
+    .catch(err => errorHandler(res, err));
+
+    // Verify user token
+    const verifyToke = (user) => {
+        if (user.token !== data['token']) return res.json({success: false, message: "Wrong token provided", responseType: 'invalid_token'});
+        // Proceed to update verification status
+        updateVerificationStatus(user.id);
+    }
+
+    // Update user verification status
+    const updateVerificationStatus = (id) => {
+        models.User.update({ isVerified: 1 }, { where: {id} })
+        .then((user) => {
+            if (user === null) return res.json({success: false, message: "Could not update user verification status. Please try again", responseType: 'unable_to_update_verification_status'});
+            // User has been verified 
+            // Return response
+            models.User.findOne({ where: { id }})
+            .then((user) => {
+                return  res.json({success: true, message: 'Verification successful!', user: user, responseType: 'verification_successful'});
+            })
+            .catch(err => errorHandler(res, err));
+        })
+        .catch(err => errorHandler(res, err));
+    }
+}
+
+
 // GENERATE JWT
 /**
  * Generate JWT Requires the following:
@@ -119,15 +162,43 @@ AuthController.Login = async (req, res, next) => {
 AuthController.generateJWT = (PhoneNo, id) => {
     // Set the expiration date to 7 days
     const expirationDate = 604800
-
+    
     return jwt.sign({
-        email: PhoneNo,
+        phone_no: PhoneNo,
         id: id
     }, process.env.SECRETE, {
         expiresIn: expirationDate // expires in 7 days
     });
 }
 
+
+// VALIDATE JWT
+/**
+ * Validate JWT:
+ * 1. Decodes JWT
+ * 2. Decodes user data.
+ * 3. Requires token
+ */
+AuthController.validateJWT = (token) => {
+    // Get the token and replace the bearer with ''
+    let filtered_token = token.replace("Bearer ","");
+    
+    // Run the verification
+    return jwt.verify(filtered_token, process.env.SECRETE, function(err, decoded) {
+        // Return false if the token does not match
+        if (err) return false;
+        
+        // Initialize the user data
+        const data = {};
+        data.userId = decoded.id;
+        data.userPhone = decoded.phone_no;
+         
+        // Return the users data
+        return data;
+    });
+
+    return false;
+}
 
 
 // Export the auth controller

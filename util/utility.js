@@ -1,3 +1,6 @@
+/**
+ * Utility object integrates any basic utility for creating an app
+ */
 // Instantiate utility object
 const Utility = {}
 

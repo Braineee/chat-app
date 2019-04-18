@@ -4,7 +4,13 @@ const User = require('../models/User');
 // Initilaize the UserController object
 const UserController = {};
 
-// Get all users
+// Require ErrorHandler
+const errorHandler = require('../util/errorHandler');
+
+/**
+ * UserController.GetAllUser:
+ * 1. Returns all user from the database
+ */
 UserController.GetAllUsers = (req, res) => {
     let offset = (req.query.offset) ? req.query.offset : 0;
     let limit = (req.query.limit) ? req.query.limit : 20;
@@ -14,17 +20,15 @@ UserController.GetAllUsers = (req, res) => {
         [orderBy, order],
     ];
 
-    let users = User.findAllCount({
+    let users = User.findAndCountAll({
         offset: parseInt(offset), 
         limit: parseInt(limit),
-        where: whereConditions,
         order: ordering,
         attributes: ['id', 'firstName', 'lastName', 'profilePhoto', 'username', 'isActive', 'location', 'PhoneNo',],
     }).then((users) => {
         return res.json({success: true, data: users});
-    }).catch(err => {
-        return false;
-    });
+    })
+    .catch(err => errorHandler(res, err));
 
     return users;
 }
@@ -43,8 +47,11 @@ UserController.GetUserById = (userId = null) => {
     return user;
 }*/
 
-// Get one user
-UserController.findOne = (req, res) => {
+/**
+ * UserController.findUser:
+ * 1. Returns data for a user from the db
+ */
+UserController.findUser = (req, res) => {
     // Check if user data is available
     if (!req.params.userdata) return res.json({success: false, message: "Please provide a user ID"});
     let userdata = req.params.userdata;
@@ -62,9 +69,37 @@ UserController.findOne = (req, res) => {
         if (user == null) return res.json({success: false, message: 'Found no account with this details'});
         return res.json({success: true, message: 'Processed', data: user})
     })
+    .catch(err => errorHandler(res, err));
 }
 
+/**
+ * UserController.isValidated:
+ * 1. Checks if the user has validate his/her account
+ * 2. Requires user id
+ */
+UserController.isValidated = (User, userId) => {
+    // Check if the user id is available
+    if (!userId) return false;
+
+    // Get the user validation status from db
+    return User.findOne({ where: { id: userId }})
+    .then(user => {
+        // Return false if user not found
+        if (user === null) return false;
+
+        // Return true if the user is validated
+        if (user.isVerified === 1) return true;
+
+        // Return false if otherwise
+        return false;
+    })
+    .catch(err => errorHandler(res, err));
+
+    return false;
+}
 
 // Export the UserController
 module.exports = UserController;
+
+
 

@@ -1,3 +1,6 @@
+/**
+ * Error handler function handle errors from anything that returns a promise
+ */
 // Error Handler function
 require('dotenv').config();
 

@@ -1,3 +1,7 @@
+/**
+ * sendSMS integrates africa'stalking sms API to enable sending of sms
+ * for more info, vist https://africastalking.com/sms/ 
+ */
 const env = process.env.NODE_ENV || 'development';
 const africasTalking = require('./../config/sms.json')[env];
 const options = {
@@ -9,6 +13,7 @@ const AfricasTalking = require('africastalking')(options);
 // Initialize a service e.g. SMS
 sms = AfricasTalking.SMS
 
+// Init the SMS object
 const SMS = {}
 
 // For dev purpose

@@ -23,7 +23,7 @@ const Passport = (passport) => {
             // Get the user from db
             models.User.findOne({ where: {PhoneNo}})
             .then((user, info) => {
-                if (user === null) return done(null, false, { message: 'Sorry, no account found with the details provided', responseType: 'invalid_user'}, info);
+                if (user === null) return done(null, false, { message: 'Sorry, no account was found with the details provided', responseType: 'invalid_user'}, info);
                 // Proceed to validate password
                 validatePassword(user);
             })
@@ -51,7 +51,7 @@ const Passport = (passport) => {
             const updateUserDeviceId = (user) => {
                 models.User.update({ deviceID: req.body.deviceId }, { where: {id: user.id}})
                 .then(async (updateUser, info) => {
-                    if (updateUser === null) return done(null, false, { message: 'Could not update user device ID', responseType: 'unable_to_update_device_id'}, info);
+                    if (updateUser === null) return done(null, false, { message: 'Could not update user device ID. Please try again', responseType: 'unable_to_update_device_id'}, info);
                     // Proceed to update user last login
                     updateUserLoginTime(updateUser);
                 })
@@ -60,13 +60,13 @@ const Passport = (passport) => {
             
             // Update time user logged in
             const updateUserLoginTime = (user) => {
-                models.User.update({ lastLoggedin: moment() }, { where: {id: user} })
+                models.User.update({ lastLoggedin: moment() }, { where: { PhoneNo } })
                 .then((user, info) => {
-                    if (user === null) return done(null, false, { message: 'Could not update time for user last login', responseType: 'unable_to_update_last_login'}, info);
+                    if (user === null) return done(null, false, { message: 'Could not update time for user last login. Please try again', responseType: 'unable_to_update_last_login'}, info);
                     // Proceed to token generation
                     models.User.findOne({ where: {PhoneNo}})
                     .then((user) => {
-                        if (!user) return done(null, false, { message: 'Could not update time for user last login', responseType: 'unable_to_update_last_login'}, info); 
+                        if (!user) return done(null, false, { message: 'Could not update time for user last login, Please try again', responseType: 'unable_to_update_last_login'}, info); 
                         generateUserLoginToken(user);
                     })
                     .catch(err => errorHandler(err));// TODO: make res dynamic in errorHandler 
@@ -82,7 +82,7 @@ const Passport = (passport) => {
                 // Remove the password form the user object
                 await delete user.password;
 
-                // User has been verified 
+                // User has been Authenticated 
                 // Return response
                 return done(null, user, info);
             }
