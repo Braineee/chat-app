@@ -49,9 +49,9 @@ UserController.GetUserById = (userId = null) => {
 
 /**
  * UserController.findUser:
- * 1. Returns data for a user from the db
+ * 1. Returns data of a user from the db
  */
-UserController.findUser = (req, res) => {
+UserController.findUser = async (req, res, User) => {
     // Check if user data is available
     if (!req.params.userdata) return res.json({success: false, message: "Please provide a user ID"});
     let userdata = req.params.userdata;
@@ -64,7 +64,6 @@ UserController.findUser = (req, res) => {
             }
         },
         attributes: ['id', 'firstName', 'lastName', 'profilePhoto', 'username', 'isActive', 'location', 'country', 'PhoneNo'],
-        include: [{model: models.Group}]
     }).then((user) => {
         if (user == null) return res.json({success: false, message: 'Found no account with this details'});
         return res.json({success: true, message: 'Processed', data: user})

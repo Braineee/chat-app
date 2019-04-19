@@ -111,16 +111,17 @@ AuthController.Login = async (req, res, next) => {
 
 // VERIFY SMS TOKEN
 /**
- * VerifyToken requires the following
- * 1. id
- * 2. token
+ * Verify sms token:
+ * 1. Verifies the authentication token sent to the user via sms
+ * 2. Requires user id
+ * 3. Requires token
  */
 AuthController.ValidateSMSToken = (req, res) => {
     let data = req.body
     let id = data['id'];
 
     // Get the user 
-    models.User.findOne({ where: { id } })
+    User.findOne({ where: { id } })
     .then((user) => {
         if (user === null) return res.json({success: false, message: "Sorry, no account was found with the details provided", responseType: 'invalid_user'});
         // Proceed to verify token

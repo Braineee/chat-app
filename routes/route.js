@@ -40,12 +40,17 @@ router.post('/auth/validate_sms_token/', [verifyData], AuthController.ValidateSM
 router.get('/users/get_all_users', [verifyToken], [isValidated], UserController.GetAllUsers);
 
 // Get details of a user
-/*router.get('/users/find_one/:userdata', [isValidated], UserController.GetUser);
+router.get('/users/find_user/:userdata', [verifyToken], [isValidated], UserController.findUser);
 
-// Get user profile
-router.get('/users/get_user_profile', [isValidated], UserController.GetUserProfile);*/
+// Get user contacts
 
 // CHAT ROUTES
+
+// Get chat 
+
+// Get conversation
+
+
 
 // Export router
 module.exports = router;
