@@ -1,6 +1,3 @@
-// MODELS
-const models = require('../models');
-
 // CONTROLLERS
 const UserController = require('../controllers/UserController');
 
@@ -10,7 +7,7 @@ const UserController = require('../controllers/UserController');
  */
 const isValidated = async (req, res, next) => {
     // Check user validation status
-    let status = await UserController.isValidated(models.User, req.user.id);
+    let status = await UserController.isValidated(req.user.id);
     
     // Return forbidden if the user account has not been validated
     if(!status) return res.status(403).json({success: false, message: "This account has not been verified, please verify your account", responseType: "account_not_validated"});

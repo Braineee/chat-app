@@ -1,11 +1,15 @@
+// Require the sequelize logical Operators 
+const Op = require('sequelize').Op;
+
 //require the user object
-const User = require('../models/User');
+const models = require('../models');
 
 // Initilaize the UserController object
 const UserController = {};
 
 // Require ErrorHandler
 const errorHandler = require('../util/errorHandler');
+
 
 /**
  * UserController.GetAllUser:
@@ -20,7 +24,7 @@ UserController.GetAllUsers = (req, res) => {
         [orderBy, order],
     ];
 
-    let users = User.findAndCountAll({
+    let users = Models.User.findAndCountAll({
         offset: parseInt(offset), 
         limit: parseInt(limit),
         order: ordering,
@@ -33,40 +37,57 @@ UserController.GetAllUsers = (req, res) => {
     return users;
 }
 
-/* Get a users by ID
-UserController.GetUserById = (userId = null) => {
-    // Check if the user is not null
-    if (userId === null) return res.json({success: false, message: "Please provide user ID"});
-    let user = User.findById(userId)
-    .then((user) => {
-        return user;
-    }).catch((err) => {
-        return false;
-    });
+/**
+ * UserController.GetUserById:
+ * 1. Return data of a user from db based on the userid
+ * 2. Requires user id [int]
+ */
+UserController.GetUserById = (req, res) => {
+    // Check if user data is available
+    if (!req.params.userdata) return res.json({success: false, message: "Please provide a user ID", responseType: 'no_userid_provided'});
 
-    return user;
-}*/
+    // Get the user from the database
+    models.User.findOne({
+        attributes: ['id', 'firstName', 'lastName', 'profilePhoto', 'username', 'isActive', 'location', 'PhoneNo'],
+        where: {id: req.params.userdata}
+    })
+    .then((user) => {
+        // Return false if the user was not found
+        if (user == null) return res.json({success: false, message: 'Found no user with this details', responseType: 'no_user_found'});
+        
+        // Return the user data
+        return res.json({success: true, message: 'Processed', data: user, responseType: 'success'});
+    })
+    .catch(err => errorHandler(res, err));
+}
 
 /**
  * UserController.findUser:
  * 1. Returns data of a user from the db
+ * 2. Requires user data [any]
  */
-UserController.findUser = async (req, res, User) => {
+UserController.findUser = async (req, res) => {
     // Check if user data is available
-    if (!req.params.userdata) return res.json({success: false, message: "Please provide a user ID"});
-    let userdata = req.params.userdata;
-    User.findOne({
+    if (!req.params.userdata) return res.json({success: false, message: "Please provide a user ID", responseType: 'no_userid_provided'});
+
+    // Get the user adata from the database
+    models.User.findOne({
+        attributes: ['id', 'firstName', 'lastName', 'profilePhoto', 'username', 'isActive', 'location', 'PhoneNo'],
         where:{
-            $or:{
-                id: userdata,
-                username: userdata,
-                email: userdata
-            }
-        },
-        attributes: ['id', 'firstName', 'lastName', 'profilePhoto', 'username', 'isActive', 'location', 'country', 'PhoneNo'],
+            [Op.or]: 
+                [
+                    {id: req.params.userdata}, 
+                    {username: req.params.userdata}, 
+                    {email: req.params.userdata},
+                    {PhoneNo: req.params.userdata},
+                ]
+        }
     }).then((user) => {
-        if (user == null) return res.json({success: false, message: 'Found no account with this details'});
-        return res.json({success: true, message: 'Processed', data: user})
+        // Return false if the user was not found
+        if (user == null) return res.json({success: false, message: 'Found no user with this details', responseType: 'no_user_found'});
+        
+        // Return the user data
+        return res.json({success: true, message: 'Processed', data: user, responseType: 'success'});
     })
     .catch(err => errorHandler(res, err));
 }
@@ -74,14 +95,14 @@ UserController.findUser = async (req, res, User) => {
 /**
  * UserController.isValidated:
  * 1. Checks if the user has validate his/her account
- * 2. Requires user id
+ * 2. Requires user id [int]
  */
-UserController.isValidated = (User, userId) => {
+UserController.isValidated = (userId) => {
     // Check if the user id is available
     if (!userId) return false;
 
     // Get the user validation status from db
-    return User.findOne({ where: { id: userId }})
+    models.User.findOne({ where: { id: userId }})
     .then(user => {
         // Return false if user not found
         if (user === null) return false;
@@ -92,9 +113,7 @@ UserController.isValidated = (User, userId) => {
         // Return false if otherwise
         return false;
     })
-    .catch(err => errorHandler(res, err));
-
-    return false;
+    .catch(err => errorHandler(err));
 }
 
 // Export the UserController
