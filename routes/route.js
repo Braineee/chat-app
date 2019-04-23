@@ -43,6 +43,7 @@ router.get('/users/get_all_users', [verifyToken], [isValidated], UserController.
 router.get('/users/find_user/:userdata', [verifyToken], [isValidated], UserController.findUser);
 
 // Get user contacts
+router.get('/users/get_user_contacts/:userid', [verifyToken], [isValidated], UserController.getUserContact)
 
 
 

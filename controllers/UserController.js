@@ -93,6 +93,15 @@ UserController.findUser = async (req, res) => {
 }
 
 /**
+ * Usercontroller.getUserContacts:
+ * 1. Returns the list of users contacts
+ * 2. Requires userid
+ */
+UserController.getUserContact = (req, res) => {
+    console.log(req.params.userid);
+}
+
+/**
  * UserController.isValidated:
  * 1. Checks if the user has validate his/her account
  * 2. Requires user id [int]
@@ -102,7 +111,7 @@ UserController.isValidated = (userId) => {
     if (!userId) return false;
 
     // Get the user validation status from db
-    models.User.findOne({ where: { id: userId }})
+    return models.User.findOne({ where: { id: userId }})
     .then(user => {
         // Return false if user not found
         if (user === null) return false;

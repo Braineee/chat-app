@@ -21,13 +21,13 @@ const AuthController = {};
 // REGISTER
 /**
  * To register a new user the following are required:
- * 1. firstName
- * 2. lastName
- * 3. email
- * 4. PhoneNo
- * 5. location
- * 6. password
- * 7. username 
+ * 1. Requires firstName
+ * 2. Requires lastName
+ * 3. Requires email
+ * 4. Requires PhoneNo
+ * 5. Requires location
+ * 6. Requires password
+ * 7. Requires username 
  */
 AuthController.Register = async (req, res) => {
     // Initialize the request data
@@ -86,9 +86,9 @@ AuthController.Register = async (req, res) => {
 // LOGIN
 /**
  * Login requires the following:
- * 1. PhoneNo
- * 2. password
- * 3. deviceId
+ * 1. Requires PhoneNo
+ * 2. Requires password
+ * 3. Requires deviceId
  */ 
 AuthController.Login = async (req, res, next) => {
     // Check for the needed data
@@ -157,8 +157,8 @@ AuthController.ValidateSMSToken = (req, res) => {
 // GENERATE JWT
 /**
  * Generate JWT Requires the following:
- * 1. PhoneNo
- * 2. [ UserId ] as id
+ * 1. Requires PhoneNo
+ * 2. Requires [ UserId ] as id
  */
 AuthController.generateJWT = (PhoneNo, id) => {
     // Set the expiration date to 7 days
